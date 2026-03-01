@@ -4,7 +4,9 @@
    ═══════════════════════════════════════════ */
 
 /* ─── Reset & Base ─────────────────────── */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -22,9 +24,12 @@
     --easy: #4ADE80;
     --easy-bg: #F0FFF4;
     --easy-text: #166534;
-    --moderate: #FB923C;
-    --moderate-bg: #FFF7ED;
-    --moderate-text: #9A3412;
+
+
+    --moderate: #EAB308;
+    --moderate-bg: #fffbd4;
+    --moderate-text: #713F12;
+
     --hard: #F87171;
     --hard-bg: #FFF1F2;
     --hard-text: #991B1B;
@@ -41,10 +46,10 @@
     --gray-800: #1F2937;
     --gray-900: #111827;
 
-    --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
-    --shadow: 0 2px 8px rgba(0,0,0,0.06);
-    --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
-    --shadow-lg: 0 8px 32px rgba(0,0,0,0.1);
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
+    --shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08);
+    --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.1);
 
     --radius-sm: 8px;
     --radius: 12px;
@@ -80,6 +85,7 @@ a {
     color: var(--primary);
     transition: var(--transition);
 }
+
 a:hover {
     color: var(--primary-dark);
 }
@@ -110,7 +116,7 @@ img {
     top: 0;
     z-index: 100;
     backdrop-filter: blur(12px);
-    background: rgba(255,255,255,0.95);
+    background: rgba(255, 255, 255, 0.95);
 }
 
 .navbar-inner {
@@ -128,6 +134,7 @@ img {
     align-items: center;
     gap: 6px;
 }
+
 .navbar-brand:hover {
     color: var(--primary);
 }
@@ -150,10 +157,12 @@ img {
     font-weight: 500;
     transition: var(--transition);
 }
+
 .nav-link:hover {
     color: var(--primary);
     background: var(--primary-bg);
 }
+
 .nav-link.active {
     color: var(--primary);
     background: var(--primary-bg);
@@ -211,6 +220,7 @@ img {
     background: var(--primary);
     color: var(--white);
 }
+
 .btn-primary:hover {
     background: var(--primary-dark);
     color: var(--white);
@@ -223,6 +233,7 @@ img {
     color: var(--primary);
     border: 1.5px solid var(--primary);
 }
+
 .btn-outline:hover {
     background: var(--primary);
     color: var(--white);
@@ -232,6 +243,7 @@ img {
     background: var(--gray-100);
     color: var(--gray-700);
 }
+
 .btn-secondary:hover {
     background: var(--gray-200);
 }
@@ -240,6 +252,7 @@ img {
     background: var(--hard);
     color: var(--white);
 }
+
 .btn-danger:hover {
     background: #EF4444;
     color: var(--white);
@@ -250,6 +263,7 @@ img {
     color: var(--gray-600);
     padding: 8px 12px;
 }
+
 .btn-ghost:hover {
     background: var(--gray-100);
     color: var(--gray-800);
@@ -270,6 +284,7 @@ img {
     overflow: hidden;
     transition: var(--transition);
 }
+
 .card:hover {
     box-shadow: var(--shadow-md);
     transform: translateY(-2px);
@@ -292,9 +307,11 @@ img {
     color: var(--gray-900);
     margin-bottom: 8px;
 }
+
 .card-title a {
     color: inherit;
 }
+
 .card-title a:hover {
     color: var(--primary);
 }
@@ -378,8 +395,13 @@ img {
     color: var(--accent);
 }
 
-.stars .bi-star-fill { color: var(--accent); }
-.stars .bi-star { color: var(--gray-300); }
+.stars .bi-star-fill {
+    color: var(--accent);
+}
+
+.stars .bi-star {
+    color: var(--gray-300);
+}
 
 .star-rating {
     display: flex;
@@ -400,8 +422,8 @@ img {
 }
 
 .star-rating label:hover,
-.star-rating label:hover ~ label,
-.star-rating input:checked ~ label {
+.star-rating label:hover~label,
+.star-rating input:checked~label {
     color: var(--accent);
 }
 
@@ -522,10 +544,12 @@ img {
     font-family: var(--font);
     text-decoration: none;
 }
+
 .filter-btn:hover {
     border-color: var(--primary);
     color: var(--primary);
 }
+
 .filter-btn.active {
     background: var(--primary);
     color: var(--white);
@@ -549,6 +573,7 @@ img {
     outline: none;
     transition: var(--transition);
 }
+
 .search-input:focus {
     border-color: var(--primary);
     box-shadow: 0 0 0 3px rgba(45, 106, 79, 0.1);
@@ -603,6 +628,7 @@ img {
     transition: var(--transition);
     background: var(--white);
 }
+
 .form-control:focus {
     border-color: var(--primary);
     box-shadow: 0 0 0 3px rgba(45, 106, 79, 0.1);
@@ -621,6 +647,7 @@ img {
     background: var(--white);
     cursor: pointer;
 }
+
 .form-select:focus {
     border-color: var(--primary);
     box-shadow: 0 0 0 3px rgba(45, 106, 79, 0.1);
@@ -669,11 +696,12 @@ img {
     cursor: pointer;
     transition: var(--transition);
 }
+
 .checkbox-grid label:hover {
     border-color: var(--primary);
 }
 
-.checkbox-grid input:checked + label,
+.checkbox-grid input:checked+label,
 .checkbox-grid label:has(input:checked) {
     background: var(--primary-bg);
     border-color: var(--primary);
@@ -714,7 +742,8 @@ img {
     border: 1px solid #FED7AA;
 }
 
-.alert-error, .alert-danger {
+.alert-error,
+.alert-danger {
     background: var(--hard-bg);
     color: var(--hard-text);
     border: 1px solid #FECACA;
@@ -729,6 +758,7 @@ img {
     opacity: 0.6;
     padding: 0 4px;
 }
+
 .alert-close:hover {
     opacity: 1;
 }
@@ -753,7 +783,7 @@ img {
     left: 0;
     right: 0;
     padding: 40px 0 24px;
-    background: linear-gradient(transparent, rgba(0,0,0,0.6));
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.6));
 }
 
 .detail-header-content {
@@ -956,6 +986,7 @@ img {
     color: var(--gray-500);
     font-size: 0.9rem;
 }
+
 .footer-links a:hover {
     color: var(--primary);
 }
@@ -1007,6 +1038,7 @@ img {
     border-radius: var(--radius-lg);
     transition: var(--transition);
 }
+
 .about-card:hover {
     box-shadow: var(--shadow-md);
     transform: translateY(-2px);
@@ -1078,6 +1110,7 @@ img {
         opacity: 0;
         transform: translateY(-10px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -1085,8 +1118,13 @@ img {
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
 .fade-in {
@@ -1094,7 +1132,8 @@ img {
 }
 
 /* ─── Helpform errors ───────────────────── */
-.helptext, .form-text {
+.helptext,
+.form-text {
     font-size: 0.8rem;
     color: var(--gray-400);
     margin-top: 4px;
@@ -1158,7 +1197,8 @@ img {
         gap: 24px;
     }
 
-    .grid-3, .grid-2 {
+    .grid-3,
+    .grid-2 {
         grid-template-columns: 1fr;
     }
 
