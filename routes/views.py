@@ -87,6 +87,7 @@ def route_detail(request, slug):
                 pk=route.pk
             ).exists()
 
+
     context = {
         'route': route,
         'reviews': reviews,
