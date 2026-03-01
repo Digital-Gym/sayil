@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+{% block title %}{{ route.title }}{% endblock %}
+
+{% block content %}
+<!-- Header Image -->
+<div class="detail-header">
+    {% if route.cover_image %}
+    <img src="{{ route.cover_image.url }}" alt="{{ route.title }}">
+    {% else %}
+    <div class="img-placeholder" style="height: 100%; font-size: 5rem;">🏔️</div>
+    {% endif %}
+    <div class="detail-header-overlay">
+        <div class="container detail-header-content">
+            <span class="badge badge-{{ route.difficulty }}" style="margin-bottom: 8px;">{{ route.get_difficulty_display
+                }}</span>
+            <h1>{{ route.title }}</h1>
+            <span style="opacity: 0.9;"><i class="bi bi-geo-alt"></i> {{ route.location }}</span>
+        </div>
+    </div>
+</div>
+
+<!-- Route Info -->
+<div class="container detail-info">
+    <!-- Stats Grid -->
+    <div class="detail-stats">
+        <div class="detail-stat">
+            <div class="detail-stat-icon"><i class="bi bi-signpost-2"></i></div>
+            <div class="detail-stat-value">{{ route.distance_km }} km</div>
+            <div class="detail-stat-label">Distance</div>
+        </div>
+        <div class="detail-stat">
+            <div class="detail-stat-icon"><i class="bi bi-graph-up-arrow"></i></div>
+            <div class="detail-stat-value">{{ route.elevation_gain }}m</div>
+            <div class="detail-stat-label">Elevation Gain</div>
+        </div>
+        <div class="detail-stat">
+            <div class="detail-stat-icon"><i class="bi bi-clock"></i></div>
+            <div class="detail-stat-value">{{ route.estimated_duration }}</div>
+            <div class="detail-stat-label">Duration</div>
+        </div>
+        <div class="detail-stat">
+            <div class="detail-stat-icon"><i class="bi bi-star-fill"></i></div>
+            <div class="detail-stat-value">{{ avg_rating }}/5</div>
+            <div class="detail-stat-label">{{ review_count }} Review{{ review_count|pluralize }}</div>
+        </div>
+    </div>
+
+    <!-- Categories -->
+    {% if route.categories.all %}
+    <div style="margin-bottom: 24px;">
+        {% for cat in route.categories.all %}
+        <span class="badge badge-category">{{ cat.icon }} {{ cat.name }}</span>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Description -->
+    <div class="detail-description">
+        {{ route.description|linebreaks }}
+    </div>
+
+    <!-- Actions -->
+    <div class="detail-actions">
+        {% if user.is_authenticated %}
+        <form method="post" action="{% url 'routes:toggle_favorite' route.slug %}">
+            {% csrf_token %}
+            {% if is_favorited %}
+            <button type="submit" class="btn btn-secondary">
+                <i class="bi bi-heart-fill" style="color: #EF4444;"></i> Saved
+            </button>
+            {% else %}
+            <button type="submit" class="btn btn-outline">
+                <i class="bi bi-heart"></i> Save to Favorites
+            </button>
+            {% endif %}
+        </form>
+        {% endif %}
+        {% if user.is_staff %}
+        <a href="{% url 'routes:edit' route.slug %}" class="btn btn-secondary">
+            <i class="bi bi-pencil"></i> Edit
+        </a>
+        <a href="{% url 'routes:delete' route.slug %}" class="btn btn-ghost" style="color: var(--hard);">
+            <i class="bi bi-trash"></i> Delete
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Reviews -->
+<div class="container reviews-section">
+    <div class="section-header">
+        <h2 class="section-title">Reviews ({{ review_count }})</h2>
+    </div>
+
+    <!-- Review Form -->
+    {% if review_form %}
+    <div class="review-form-card">
+        <h3 style="font-size: 1rem; font-weight: 600; margin-bottom: 16px;">Leave a Review</h3>
+        <form method="post" action="{% url 'routes:add_review' route.slug %}">
+            {% csrf_token %}
+            <div class="star-rating" style="margin-bottom: 16px;">
+                {% for i in "54321" %}
+                <input type="radio" name="rating_star" id="star{{ i }}" value="{{ i }}">
+                <label for="star{{ i }}" data-value="{{ i }}"><i class="bi bi-star-fill"></i></label>
+                {% endfor %}
+            </div>
+            <input type="hidden" name="rating" id="id_rating" value="">
+            <div class="form-group">
+                <textarea name="comment" class="form-control" rows="3"
+                    placeholder="Share your experience on this trail..." required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary btn-sm">Post Review</button>
+        </form>
+    </div>
+    {% elif user_review %}
+    <div class="review-form-card">
+        <p style="color: var(--gray-500); font-size: 0.9rem;">
+            <i class="bi bi-check-circle" style="color: var(--easy);"></i>
+            You already reviewed this route.
+        </p>
+    </div>
+    {% elif not user.is_authenticated %}
+    <div class="review-form-card">
+        <p style="color: var(--gray-500); font-size: 0.9rem;">
+            <a href="{% url 'accounts:login' %}?next={{ request.path }}">Log in</a> to leave a review.
+        </p>
+    </div>
+    {% endif %}
+
+    <!-- Reviews List -->
+    {% for review in reviews %}
+    <div class="review-card fade-in">
+        <div class="review-header">
+            <div>
+                <span class="review-author">{{ review.user.username }}</span>
+                <div class="stars" style="margin-top: 4px;">
+                    {% for i in "12345" %}
+                    {% if forloop.counter <= review.rating %} <i class="bi bi-star-fill"></i>
+                        {% else %}
+                        <i class="bi bi-star"></i>
+                        {% endif %}
+                        {% endfor %}
+                </div>
+            </div>
+            <span class="review-date">{{ review.created_at|timesince }} ago</span>
+        </div>
+        <p class="review-comment">{{ review.comment }}</p>
+    </div>
+    {% empty %}
+    <div class="empty-state" style="padding: 32px;">
+        <i class="bi bi-chat-dots"></i>
+        <p>No reviews yet. Be the first to share your experience!</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <!-- Profile Header -->
+        <div class="profile-header">
+            {% if user_profile.avatar %}
+            <img src="{{ user_profile.avatar.url }}" alt="{{ user.username }}" class="profile-avatar">
+            {% else %}
+            <div class="profile-avatar-placeholder">
+                <i class="bi bi-person"></i>
+            </div>
+            {% endif %}
+            <div>
+                <h1 class="profile-name">{{ user.username }}</h1>
+                <p class="profile-bio">{{ user_profile.bio|default:"No bio yet." }}</p>
+                <a href="{% url 'accounts:profile_edit' %}" class="btn btn-outline btn-sm" style="margin-top: 8px;">
+                    <i class="bi bi-pencil"></i> Edit Profile
+                </a>
+            </div>
+        </div>
+
+        <!-- Favorites -->
+        <div style="margin-bottom: 48px;">
+            <div class="section-header">
+                <h2 class="section-title"><i class="bi bi-heart"></i> Saved Routes</h2>
+            </div>
+            {% if favorites %}
+            <div class="grid grid-3">
+                {% for route in favorites %}
+                <div class="card">
+                    {% if route.cover_image %}
+                    <img src="{{ route.cover_image.url }}" alt="{{ route.title }}" class="card-image">
+                    {% else %}
+                    <div class="img-placeholder">🥾</div>
+                    {% endif %}
+                    <div class="card-body">
+                        <span class="badge badge-{{ route.difficulty }}">{{ route.get_difficulty_display }}</span>
+                        <h3 class="card-title" style="margin-top: 8px;">
+                            <a href="{{ route.get_absolute_url }}">{{ route.title }}</a>
+                        </h3>
+                        <div class="card-meta">
+                            <span class="card-meta-item"><i class="bi bi-geo-alt"></i> {{ route.location }}</span>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state" style="padding: 32px;">
+                <i class="bi bi-heart"></i>
+                <p>No saved routes yet. Browse trails and save your favorites!</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- My Reviews -->
+        <div>
+            <div class="section-header">
+                <h2 class="section-title"><i class="bi bi-chat-quote"></i> My Reviews</h2>
+            </div>
+            {% if user_reviews %}
+            {% for review in user_reviews %}
+            <div class="review-card">
+                <div class="review-header">
+                    <div>
+                        <a href="{{ review.route.get_absolute_url }}" style="font-weight: 600; color: var(--gray-900);">
+                            {{ review.route.title }}
+                        </a>
+                        <div class="stars" style="margin-top: 4px;">
+                            {% for i in "12345" %}
+                            {% if forloop.counter <= review.rating %} <i class="bi bi-star-fill"></i>
+                                {% else %}
+                                <i class="bi bi-star"></i>
+                                {% endif %}
+                                {% endfor %}
+                        </div>
+                    </div>
+                    <span class="review-date">{{ review.created_at|timesince }} ago</span>
+                </div>
+                <p class="review-comment">{{ review.comment }}</p>
+            </div>
+            {% endfor %}
+            {% else %}
+            <div class="empty-state" style="padding: 32px;">
+                <i class="bi bi-chat-dots"></i>
+                <p>No reviews yet. Share your trail experiences!</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}

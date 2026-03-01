@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% block title %}Routes{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">Hiking Routes</h2>
+            {% if user.is_staff %}
+            <a href="{% url 'routes:create' %}" class="btn btn-primary btn-sm">
+                <i class="bi bi-plus-lg"></i> Add Route
+            </a>
+            {% endif %}
+        </div>
+
+        <!-- Filters -->
+        <div class="filters">
+            <form method="get" action="{% url 'routes:list' %}" class="search-box">
+                <input type="text" name="q" value="{{ query }}" placeholder="Search trails..." class="search-input">
+                <button type="submit" class="btn btn-primary btn-sm">
+                    <i class="bi bi-search"></i>
+                </button>
+            </form>
+
+            <div class="filter-group">
+                <a href="{% url 'routes:list' %}" class="filter-btn {% if not difficulty %}active{% endif %}">All</a>
+                <a href="{% url 'routes:list' %}?difficulty=easy"
+                    class="filter-btn {% if difficulty == 'easy' %}active{% endif %}">🟢 Easy</a>
+                <a href="{% url 'routes:list' %}?difficulty=moderate"
+                    class="filter-btn {% if difficulty == 'moderate' %}active{% endif %}">🟡 Moderate</a>
+                <a href="{% url 'routes:list' %}?difficulty=hard"
+                    class="filter-btn {% if difficulty == 'hard' %}active{% endif %}">🔴 Hard</a>
+            </div>
+        </div>
+
+        <!-- Category filter -->
+        {% if categories %}
+        <div class="filter-group" style="margin-bottom: 32px;">
+            {% for cat in categories %}
+            <a href="{% url 'routes:list' %}?category={{ cat.slug }}"
+                class="filter-btn {% if category_slug == cat.slug %}active{% endif %}">
+                {{ cat.icon }} {{ cat.name }}
+            </a>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Route Grid -->
+        {% if routes %}
+        <div class="grid grid-3">
+            {% for route in routes %}
+            <div class="card fade-in">
+                {% if route.cover_image %}
+                <img src="{{ route.cover_image.url }}" alt="{{ route.title }}" class="card-image" loading="lazy">
+                {% else %}
+                <div class="img-placeholder">🥾</div>
+                {% endif %}
+                <div class="card-body">
+                    <div class="card-meta">
+                        <span class="badge badge-{{ route.difficulty }}">{{ route.get_difficulty_display }}</span>
+                        <span class="card-meta-item"><i class="bi bi-geo-alt"></i> {{ route.location }}</span>
+                    </div>
+                    <h3 class="card-title">
+                        <a href="{{ route.get_absolute_url }}">{{ route.title }}</a>
+                    </h3>
+                    <p class="card-description">{{ route.description|truncatewords:18 }}</p>
+                </div>
+                <div class="card-footer">
+                    <span class="card-meta-item">
+                        <i class="bi bi-signpost-2"></i> {{ route.distance_km }} km
+                    </span>
+                    <span class="card-meta-item">
+                        <i class="bi bi-clock"></i> {{ route.estimated_duration }}
+                    </span>
+                    <span class="stars">
+                        {% with avg=route.average_rating %}
+                        {% for i in "12345" %}
+                        {% if forloop.counter <= avg %} <i class="bi bi-star-fill"></i>
+                            {% else %}
+                            <i class="bi bi-star"></i>
+                            {% endif %}
+                            {% endfor %}
+                            {% endwith %}
+                    </span>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <i class="bi bi-compass"></i>
+            <p>No routes found. {% if query %}Try a different search.{% endif %}</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
