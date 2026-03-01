@@ -1,0 +1,78 @@
+services:
+  web:
+    build: .
+    volumes:
+      - static_volume:/app/staticfiles
+      - media_volume:/app/media
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - sayil_network
+
+  db:
+    image: postgres:16-alpine
+    restart: always
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_DB=${DB_NAME:-sayil_db}
+      - POSTGRES_USER=${DB_USER:-sayil_user}
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-sayil_secure_password}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-sayil_user} -d ${DB_NAME:-sayil_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - sayil_network
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - static_volume:/app/staticfiles:ro
+      - media_volume:/app/media:ro
+      - certbot_webroot:/var/www/certbot:ro
+      - etc_letsencrypt:/etc/letsencrypt:ro
+    depends_on:
+      - web
+    restart: always
+    networks:
+      - sayil_network
+
+  certbot:
+    image: certbot/certbot
+    container_name: certbot
+    volumes:
+      - etc_letsencrypt:/etc/letsencrypt
+      - certbot_webroot:/var/www/certbot
+    entrypoint: >
+      sh -c "
+        if [ -f /etc/letsencrypt/live/sayil.uz/fullchain.pem ]; then
+          echo 'Certificate exists, checking renewal...';
+          certbot renew --webroot --webroot-path=/var/www/certbot --quiet;
+        else
+          echo 'No certificate found, obtaining new one...';
+          certbot certonly --webroot --webroot-path=/var/www/certbot --email 00015641@wiut.uz --agree-tos --no-eff-email -d sayil.uz -d www.sayil.uz;
+        fi
+      "
+    depends_on:
+      - nginx
+
+volumes:
+  postgres_data:
+  static_volume:
+  media_volume:
+  etc_letsencrypt:
+  certbot_webroot:
+
+networks:
+  sayil_network:
