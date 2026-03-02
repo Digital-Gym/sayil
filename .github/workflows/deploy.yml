@@ -65,6 +65,8 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    outputs:
+      repo_lower: ${{ steps.repo_name.outputs.repo_lower }}
 
     steps:
       - uses: actions/checkout@v4
@@ -80,6 +82,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set lowercase repository name
+        id: repo_name
         run: echo "REPO_LOWER=$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
 
       - name: Build and push Docker image
@@ -109,7 +112,7 @@ jobs:
             git pull origin main
 
             # Pull latest docker image
-            docker pull ghcr.io/${{ env.REPO_LOWER }}/${{ env.DOCKER_IMAGE_NAME }}:latest
+            docker pull ghcr.io/${{ needs.build-and-push.outputs.repo_lower }}/${{ env.DOCKER_IMAGE_NAME }}:latest
 
             # Restart services
             docker compose down
