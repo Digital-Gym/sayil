@@ -1,123 +1,107 @@
-{% extends 'base.html' %} {% block title %}Home{% endblock %} {% block content
-%}
+{% extends 'base.html' %}
+{% block title %}Home{% endblock %}
+
+{% block content %}
 <!-- Hero Section -->
 <section class="hero">
-  <div class="container">
-    <h1>Discover Trails Near You!</h1>
-    <p>
-      Explore curated hiking routes, read reviews from fellow hikers, and find
-      your next adventure.
-    </p>
-    <div class="hero-actions">
-      <a href="{% url 'routes:list' %}" class="btn btn-primary btn-lg"
-        >Browse Routes</a
-      >
-      {% if not user.is_authenticated %}
-      <a href="{% url 'accounts:register' %}" class="btn btn-outline btn-lg"
-        >Join Sayil</a
-      >
-      {% endif %}
+    <div class="container">
+        <h1>Discover Trails Near You</h1>
+        <p>Explore curated hiking routes, read reviews from fellow hikers, and find your next adventure.</p>
+        <div class="hero-actions">
+            <a href="{% url 'routes:list' %}" class="btn btn-primary btn-lg">Browse Routes</a>
+            {% if not user.is_authenticated %}
+            <a href="{% url 'accounts:register' %}" class="btn btn-outline btn-lg">Join Sayil</a>
+            {% endif %}
+        </div>
+        <div class="hero-stats">
+            <div class="hero-stat">
+                <div class="hero-stat-number">{{ total_routes }}</div>
+                <div class="hero-stat-label">Trail Routes</div>
+            </div>
+            <div class="hero-stat">
+                <div class="hero-stat-number">{{ categories|length }}</div>
+                <div class="hero-stat-label">Categories</div>
+            </div>
+            <div class="hero-stat">
+                <div class="hero-stat-number">🏔️</div>
+                <div class="hero-stat-label">Uzbekistan & Beyond</div>
+            </div>
+        </div>
     </div>
-    <div class="hero-stats">
-      <div class="hero-stat">
-        <div class="hero-stat-number">{{ total_routes }}</div>
-        <div class="hero-stat-label">Trail Routes</div>
-      </div>
-      <div class="hero-stat">
-        <div class="hero-stat-number">{{ categories|length }}</div>
-        <div class="hero-stat-label">Categories</div>
-      </div>
-      <div class="hero-stat">
-        <div class="hero-stat-number">🏔️</div>
-        <div class="hero-stat-label">Uzbekistan & Beyond</div>
-      </div>
-    </div>
-  </div>
 </section>
 
 <!-- Categories -->
 {% if categories %}
 <section class="section">
-  <div class="container">
-    <div class="section-header">
-      <h2 class="section-title">Explore by Category</h2>
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">Explore by Category</h2>
+        </div>
+        <div class="filter-group">
+            {% for cat in categories %}
+            <a href="{% url 'routes:list' %}?category={{ cat.slug }}" class="filter-btn">
+                {{ cat.icon }} {{ cat.name }}
+            </a>
+            {% endfor %}
+        </div>
     </div>
-    <div class="filter-group">
-      {% for cat in categories %}
-      <a
-        href="{% url 'routes:list' %}?category={{ cat.slug }}"
-        class="filter-btn"
-      >
-        {{ cat.icon }} {{ cat.name }}
-      </a>
-      {% endfor %}
-    </div>
-  </div>
 </section>
 {% endif %}
 
 <!-- Featured Routes -->
 {% if featured_routes %}
 <section class="section">
-  <div class="container">
-    <div class="section-header">
-      <h2 class="section-title">Featured Routes</h2>
-      <a href="{% url 'routes:list' %}" class="btn btn-outline btn-sm"
-        >View All →</a
-      >
-    </div>
-    <div class="grid grid-3">
-      {% for route in featured_routes %}
-      <div class="card fade-in">
-        {% if route.cover_image %}
-        <img
-          src="{{ route.cover_image.url }}"
-          alt="{{ route.title }}"
-          class="card-image"
-        />
-        {% else %}
-        <div class="img-placeholder">🥾</div>
-        {% endif %}
-        <div class="card-body">
-          <div class="card-meta">
-            <span class="badge badge-{{ route.difficulty }}"
-              >{{ route.get_difficulty_display }}</span
-            >
-            <span class="card-meta-item"
-              ><i class="bi bi-geo-alt"></i> {{ route.location }}</span
-            >
-          </div>
-          <h3 class="card-title">
-            <a href="{{ route.get_absolute_url }}">{{ route.title }}</a>
-          </h3>
-          <p class="card-description">
-            {{ route.description|truncatewords:20 }}
-          </p>
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">Featured Routes</h2>
+            <a href="{% url 'routes:list' %}" class="btn btn-outline btn-sm">View All →</a>
         </div>
-        <div class="card-footer">
-          <span class="card-meta-item">
-            <i class="bi bi-signpost-2"></i> {{ route.distance_km }} km
-          </span>
-          <span class="stars">
-            {% with avg=route.average_rating %} {% for i in "12345" %} {% if
-            forloop.counter <= avg %} <i class="bi bi-star-fill"></i>
-            {% else %}
-            <i class="bi bi-star"></i>
-            {% endif %} {% endfor %} {% endwith %}
-          </span>
+        <div class="grid grid-3">
+            {% for route in featured_routes %}
+            <div class="card fade-in">
+                {% if route.cover_image %}
+                <img src="{{ route.cover_image.url }}" alt="{{ route.title }}" class="card-image">
+                {% else %}
+                <div class="img-placeholder">🥾</div>
+                {% endif %}
+                <div class="card-body">
+                    <div class="card-meta">
+                        <span class="badge badge-{{ route.difficulty }}">{{ route.get_difficulty_display }}</span>
+                        <span class="card-meta-item"><i class="bi bi-geo-alt"></i> {{ route.location }}</span>
+                    </div>
+                    <h3 class="card-title">
+                        <a href="{{ route.get_absolute_url }}">{{ route.title }}</a>
+                    </h3>
+                    <p class="card-description">{{ route.description|truncatewords:20 }}</p>
+                </div>
+                <div class="card-footer">
+                    <span class="card-meta-item">
+                        <i class="bi bi-signpost-2"></i> {{ route.distance_km }} km
+                    </span>
+                    <span class="stars">
+                        {% with avg=route.average_rating %}
+                        {% for i in "12345" %}
+                        {% if forloop.counter <= avg %} <i class="bi bi-star-fill"></i>
+                            {% else %}
+                            <i class="bi bi-star"></i>
+                            {% endif %}
+                            {% endfor %}
+                            {% endwith %}
+                    </span>
+                </div>
+            </div>
+            {% endfor %}
         </div>
-      </div>
-      {% endfor %}
     </div>
-  </div>
 </section>
 {% else %}
 <section class="section">
-  <div class="container">
-    <div class="empty-state">
-      <i class="bi bi-compass"></i>
-      <p>No routes yet. Check back soon!</p>
+    <div class="container">
+        <div class="empty-state">
+            <i class="bi bi-compass"></i>
+            <p>No routes yet. Check back soon!</p>
+        </div>
     </div>
-  </div>
 </section>
-{% endif %} {% endblock %}
+{% endif %}
+{% endblock %}
