@@ -83,7 +83,7 @@ jobs:
       - name: Set image tag
         id: meta
         run: |
-          echo "image_tag=digital-gym/${{ env.DOCKER_IMAGE_NAME }}" >> $GITHUB_OUTPUT
+          echo "image_tag=${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_IMAGE_NAME }}" >> $GITHUB_OUTPUT
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
@@ -117,7 +117,7 @@ jobs:
             git pull origin main
 
             # Pull the latest web image from Docker Hub
-            docker pull ${{ needs.build-and-push.outputs.image_tag }}:latest
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_IMAGE_NAME }}:latest
 
             # Recreate only the web container
             docker compose up -d --no-deps --force-recreate web
