@@ -1,6 +1,8 @@
 services:
   web:
-    build: .
+    image: wiutbob/sayil-web:latest
+    # build: .
+
     volumes:
       - static_volume:/app/staticfiles
       - media_volume:/app/media
