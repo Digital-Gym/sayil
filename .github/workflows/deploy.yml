@@ -109,6 +109,7 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
+          envs: IMAGE_TAG
           script: |
             set -e
             cd ~/sayil
@@ -117,13 +118,12 @@ jobs:
             git pull origin main
 
             # Pull the latest web image from Docker Hub
-            docker pull ${{ needs.build-and-push.outputs.image_tag }}:latest
+            docker pull $IMAGE_TAG:latest
 
             # Recreate only the web container
             docker compose up -d --no-deps --force-recreate web
 
             # Wait for the new web container to become healthy
-
             echo "Waiting for web container to become healthy..."
             RETRIES=24
             until [ "$(docker inspect --format='{{.State.Health.Status}}' sayil-web-1 2>/dev/null)" = "healthy" ] || [ "$RETRIES" -eq 0 ]; do
@@ -150,3 +150,5 @@ jobs:
             docker image prune -af
 
             echo "DEPLOYMENT IS FINISHED!"
+        env:
+          IMAGE_TAG: ${{ needs.build-and-push.outputs.image_tag }}
