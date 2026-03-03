@@ -1,0 +1,36 @@
+services:
+  web:
+    build:
+      context: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:18-alpine
+    restart: always
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_DB=${DB_NAME:-sayil_db}
+      - POSTGRES_USER=${DB_USER:-sayil_user}
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-sayil_secure_password}
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-sayil_user} -d ${DB_NAME:-sayil_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_dev_data:
