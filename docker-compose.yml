@@ -17,7 +17,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-      start_period: 30s # gives entrypoint.sh time to run migrate/collectstatic
+      start_period: 45s # gives entrypoint.sh time to run migrate/collectstatic
 
   db:
     image: postgres:16-alpine
