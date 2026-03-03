@@ -13,11 +13,11 @@ services:
     networks:
       - sayil_network
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:8000/ || exit 1"]
+      test: ["CMD-SHELL", "test -S /app/gunicorn.ctl || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 5
-      start_period: 45s # gives entrypoint.sh time to run migrate/collectstatic
+      start_period: 120s # gives entrypoint.sh time to run migrate/collectstatic
 
   db:
     image: postgres:16-alpine
