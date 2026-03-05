@@ -162,7 +162,7 @@ The test suite covers:
 
 The production stack uses the pre-built Docker Hub image. You do not need the source code on the server to run it.
 
-### First-time setup on a fresh Hostman VPS (Ubuntu 20.04)
+### First-time setup on a fresh VPS (Ubuntu 20.04)
 
 ```bash
 # 1. Create a non-root sudo user and log in as that user
