@@ -32,7 +32,7 @@ class Route(models.Model):
     DIFFICULTY_CHOICES = [
         ('easy', 'Easy'),
         ('moderate', 'Moderate'),
-        ('hard', 'Hard'),
+        ('hard', 'Qiyin'),
     ]
 
     title = models.CharField(max_length=200)
